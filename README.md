@@ -1,6 +1,6 @@
-# Services
+# XML Services
 
-Example XML services.
+Example phone XML services.
 
-See [http://usecallmanager.nz/phone-services-xml.html](Phone Services) for
+See [Phone Services](http://usecallmanager.nz/phone-services-xml.html) for
 more information.
