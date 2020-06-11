@@ -1,0 +1,141 @@
+#!/usr/bin/perl
+
+use strict;
+use English qw/-no_match_vars/;
+use CGI::Simple;
+use URI::Escape;
+use HTML::Entities;
+use LWP::UserAgent;
+use HTTP::Cookies;
+use XML::LibXML;
+
+# directory containing the SEPMAC.cnf.xml files
+our $TFTPBOOT_DIRECTORY = '/var/lib/tftpboot';
+
+# login credentials set in manager.conf
+our $MANAGER_HOSTNAME = 'localhost:8088';
+our $MANAGER_USERNAME = 'asterisk';
+our $MANAGER_PASSWORD = 'asterisk';
+
+sub parked_calls {
+    my $cgi = shift;
+
+    my $useragent = LWP::UserAgent->new;
+
+    $useragent->cookie_jar (HTTP::Cookies->new (hide_cookie2 => 1));
+
+    my ($request, $response);
+
+    $request  = HTTP::Request->new (GET => 'http://' . $MANAGER_HOSTNAME . '/mxml?Action=Login'
+                                    . '&Username=' . uri_escape ($MANAGER_USERNAME)
+                                    . '&Secret=' . uri_escape ($MANAGER_PASSWORD));
+
+    $response = $useragent->request ($request);
+
+    die $response->as_string unless ($response->is_success);
+
+    $request  = HTTP::Request->new (GET => 'http://' . $MANAGER_HOSTNAME . '/mxml?Action=ParkedCalls');
+    $response = $useragent->request ($request);
+
+    die $response->as_string unless ($response->is_success);
+
+    my $document = XML::LibXML->load_xml (string => $response->content);
+
+    my $parked_calls = {};
+
+    foreach my $element ($document->findnodes ('/ajax-response/response/generic[@event="ParkedCall"]')) {
+         my ($extension, $name);
+
+         $extension = $element->getAttribute ('exten');
+         $name      = $element->getAttribute ('callerdidname') || $element->getAttribute ('calleridnum');
+
+         $parked_calls->{$extension} = $name;
+    }
+
+    $request  = HTTP::Request->new (GET => 'http://' . $MANAGER_HOSTNAME . '/mxml?Action=Logoff');
+    $response = $useragent->request ($request);
+
+    die $response->as_string unless ($response->is_success);
+
+    print '<CiscoIPPhoneMenu>',
+            '<Title>Parked Calls</Title>';
+
+    foreach my $extension (sort ({$parked_calls->{$a} cmp $parked_calls->{$b}} keys %{$parked_calls})) {
+       my $name = $parked_calls->{$extension};
+
+       print '<MenuItem>',
+               '<Name>', encode_entities ($name), '</Name>',
+               '<URL>Dial:', encode_entities ($extension), '</URL>',
+             '</MenuItem>';
+    }
+
+    print  '<SoftKeyItem>',
+             '<Name>Exit</Name>',
+             '<URL>', $cgi->url, '?name=', encode_entities ($cgi->param ('name')),
+               '&amp;</URL>',
+             '<Position>', $cgi->http ('X-Cisco-IPPhoneModelName') =~ m/^CP-79/ ? 3 : 1, '</Position>',
+           '</SoftKeyItem>',
+           '<SoftKeyItem>',
+             '<Name>Dial</Name>',
+             '<URL>SoftKey:Select</URL>',
+             '<Position>', $cgi->http ('X-Cisco-IPPhoneModelName') =~ m/^CP-79/ ? 1 : 2, '</Position>',
+           '</SoftKeyItem>',
+           '<SoftKeyItem>',
+             '<Name>Update</Name>',
+             '<URL>', $cgi->url, '?name=', encode_entities ($cgi->param ('name')),
+               '&amp;view=parkedcalls</URL>',
+             '<Position>', $cgi->http ('X-Cisco-IPPhoneModelName') =~ m/^CP-79/ ? 2 : 3, '</Position>',
+           '</SoftKeyItem>',
+         '</CiscoIPPhoneMenu>';
+}
+
+sub services_menu {
+    my $cgi = shift;
+
+    print '<CiscoIPPhoneMenu>',
+            '<Title>Services</Title>',
+            '<MenuItem>',
+              '<Name>Parked Calls</Name>',
+              '<URL>', $cgi->url, '?name=', encode_entities ($cgi->param ('name')),
+                '&amp;view=parkedcalls<URL>',
+            '</MenuItem>',
+            '<Prompt>Your current options</Prompt>',
+            '<SoftKeyItem>',
+              '<Name>Exit</Name>',
+              '<URL>Init:Services</URL>',
+              '<Position>', $cgi->http ('X-Cisco-IPPhoneModelName') =~ m/^CP-79/ ? 3 : 1, '</Position>',
+            '</SoftKeyItem>',
+            '<SoftKeyItem>',
+              '<Name>Select</Name>',
+              '<URL>SoftKey:Select</URL>',
+              '<Position>', $cgi->http ('X-Cisco-IPPhoneModelName') =~ m/^CP-79/ ? 1 : 2, '</Position>',
+            '</SoftKeyItem>',
+          '</CiscoIPPhoneMenu>';
+}
+
+eval {
+    my $cgi = CGI::Simple->new;
+
+    # check that the device exists
+    unless ($cgi->param ('name') =~ m/^SEP[0-9A-F]{12}$/
+            && stat ($TFTPBOOT_DIRECTORY . '/' . $cgi->param ('name') . '.cnf.xml')) {
+        print 'Status: 403 Forbidden', "\r\n",
+              'Content-Type: text/plain', "\r\n",
+              "\r\n",
+              'Invalid or unknown device name';
+
+        return;
+    }
+
+    print 'Status: 200 OK', "\r\n",
+          'Content-Type: text/xml', "\r\n",
+          "\r\n";
+
+    if ($cgi->param ('view') eq 'parkedcalls') {
+        parked_calls ($cgi);
+    } else {
+        services_menu ($cgi);
+    }
+};
+
+warn $EVAL_ERROR if (length $EVAL_ERROR);
