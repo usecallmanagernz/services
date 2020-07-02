@@ -1,4 +1,4 @@
-# Services
+# XML Services
 
 This repository contains example phone XML services as a WSGI application
 written in Python/Flask.
@@ -18,5 +18,5 @@ variable.
 Additional settings for Flask can be specified in the `FLASK_CONFIG`
 environment variable.
 
-See [http://usecallmanager.nz/phone-services-xml.html](Phone Services) for
+See [Phone Services](http://usecallmanager.nz/phone-services-xml.html) for
 more information.
