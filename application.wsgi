@@ -8,6 +8,7 @@ import problem_report
 
 
 application = Flask(__name__)
+application.config.from_envvar('FLASK_CONFIG', silent = True)
 
 application.register_blueprint(authentication.blueprint)
 application.register_blueprint(services.blueprint)
@@ -26,5 +27,4 @@ def error_handler(error):
 
 
 if __name__ == '__main__':
-    application.config.from_envvar('FLASK_CONFIG', silent = True)
     application.run()

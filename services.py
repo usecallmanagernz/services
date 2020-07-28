@@ -62,18 +62,20 @@ def parked_calls():
 
         calls.append((extension, name))
 
+    calls.sort(key = lambda call: call[0])
+
     response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
     response.raise_for_status()
 
     content = '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<CiscoIPPhoneMenu>' \
+        '<CiscoIPPhoneDirectory>' \
           '<Title>Parked Calls</Title>'
 
     for extension, name in calls:
-        content += '<MenuItem>' \
-                     '<Name>' + escape(name) + '</Name>' \
-                     '<URL>Dial:' + quote_plus(extension) + '</URL>' \
-                   '</MenuItem>'
+        content += '<DirectoryEntry>' \
+              '<Name>' + escape(name) + '</Name>' \
+              '<Telephone>' + quote_plus(extension) + '</Telephone>' \
+            '</DirectoryEntry>'
 
     if g.is_79xx:
         content += '<Prompt>Select call</Prompt>'
@@ -84,7 +86,7 @@ def parked_calls():
             '<URL>' + request.url_root + 'services?name=' + quote_plus(g.device_name) + '</URL>' \
           '</SoftKeyItem>' \
           '<SoftKeyItem>' \
-            '<Name>Dial</Name>' \
+            '<Name>' + ('Dial' if g.is_79xx else 'Call') + '</Name>' \
             '<Position>' + ('1' if g.is_79xx else '2') + '</Position>' \
             '<URL>SoftKey:Select</URL>' \
           '</SoftKeyItem>' \
@@ -93,7 +95,7 @@ def parked_calls():
             '<Position>' + ('2' if g.is_79xx else '3') + '</Position>' \
             '<URL>SoftKey:Update</URL>' \
           '</SoftKeyItem>' \
-        '</CiscoIPPhoneMenu>'
+        '</CiscoIPPhoneDirectory>'
 
     return Response(content, mimetype = 'text/xml'), 200
 
