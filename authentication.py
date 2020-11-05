@@ -25,7 +25,7 @@ def before_request():
     device_name = request.args.get('devicename', '')
 
     # check that the device name is valid
-    if not re.search(r'(?x) SEP [0-9A-F]{12} $', device_name) or \
+    if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name) or \
        not os.path.exists(f'{config.tftpboot_dir}/{device_name}.cnf.xml'):
         return Response('ERROR'), 403
 

@@ -27,7 +27,7 @@ def problem_report():
 def before_request():
     device_name = request.form.get('devicename', '')
 
-    if not re.search(r'(?x) SEP [0-9A-F]{12} $', device_name) or \
+    if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name) or \
        not os.path.exists(f'{config.tftpboot_dir}/{device_name}.cnf.xml'):
         return Response('Invalid device', mimetype = 'text/plain'), 403
 
