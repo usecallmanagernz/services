@@ -5,6 +5,7 @@ import re
 from math import ceil
 from urllib.parse import quote_plus
 from html import escape
+
 from lxml import etree
 import requests
 from flask import Blueprint, Response, request, g
