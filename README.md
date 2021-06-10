@@ -1,3 +1,5 @@
+[![python lint check](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml/badge.svg?branch=master)](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml)
+
 # XML Services
 
 This repository contains example phone XML services as a WSGI application
