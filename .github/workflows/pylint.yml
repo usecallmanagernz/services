@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '*.py'
+      - '*.wsgi'
+
   pull_request:
     branches:
       - master
+    paths:
+      - '*.py'
+      - '*.wsgi'
 
 jobs:
   xmllint:
