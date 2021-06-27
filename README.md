@@ -1,4 +1,4 @@
-[![python lint](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml/badge.svg?branch=master)](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml)
+[![python lint](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml/badge.svg?branch=master)](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/usecallmanagernz/services?color=blue&label=version&sort=semver)
 
 # XML Services
 
