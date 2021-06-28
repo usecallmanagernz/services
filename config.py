@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+#
+# Copyright (c) 2020 Gareth Palmer <gareth.palmer3@gmail.com>
+# This program is free software, distributed under the terms of
+# the GNU General Public License Version 2.
 
 import os.path
 import yaml
