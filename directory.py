@@ -10,8 +10,8 @@ from math import ceil
 from urllib.parse import quote_plus
 from html import escape
 
-from lxml import etree
 import requests
+from lxml import etree
 from flask import Blueprint, Response, request, g
 import config
 
@@ -21,20 +21,20 @@ blueprint = Blueprint('directory', __name__)
 
 @blueprint.route('/directory')
 def directory_index():
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneMenu>' \
           '<Title>Local Directory</Title>'
 
     for index in ('1', '2ABC', '3DEF', '4GHI', '5JKL', '6MNO', '7PRQS', '8TUV', '9WXYZ', '0'):
-        content += '<MenuItem>' \
+        xml += '<MenuItem>' \
             '<Name>' + escape(index) + '</Name>' \
             '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '</URL>' \
           '</MenuItem>'
 
     if g.is_79xx:
-        content += '<Prompt>Your current options</Prompt>'
+        xml += '<Prompt>Your current options</Prompt>'
 
-    content += '<SoftKeyItem>' \
+    xml += '<SoftKeyItem>' \
             '<Name>Exit</Name>' \
             '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
             '<URL>Init:Directories</URL>' \
@@ -51,7 +51,7 @@ def directory_index():
           '</SoftKeyItem>' \
         '</CiscoIPPhoneMenu>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.route('/directory/entries')
@@ -100,20 +100,20 @@ def directory_entries():
     except ValueError:
         page = 1
 
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneDirectory>' \
           '<Title>' + escape(index) + (' ' + str(page) + '/' + str(pages) if pages > 1 else '') + '</Title>'
 
     for extension, name in entries[(page - 1) * 10:page * 10]:
-        content += '<DirectoryEntry>' \
+        xml += '<DirectoryEntry>' \
               '<Name>' + escape(name) + '</Name>' \
               '<Telephone>' + quote_plus(extension) + '</Telephone>' \
             '</DirectoryEntry>'
 
     if g.is_79xx:
-        content += '<Prompt>Select entry</Prompt>'
+        xml += '<Prompt>Select entry</Prompt>'
 
-    content += '<SoftKeyItem>' \
+    xml += '<SoftKeyItem>' \
           '<Name>Exit</Name>' \
           '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
           '<URL>' + request.url_root + 'directory?name=' + quote_plus(g.device_name) + '</URL>' \
@@ -125,48 +125,48 @@ def directory_entries():
         '</SoftKeyItem>'
 
     if page < pages:
-        content += '<SoftKeyItem>' \
+        xml += '<SoftKeyItem>' \
               '<Name>Next</Name>' \
               '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '&amp;page=' + str(page + 1) + '</URL>' \
               '<Position>' + ('2' if g.is_79xx else '3') + '</Position>' \
             '</SoftKeyItem>'
 
     if page > 1:
-        content += '<SoftKeyItem>' \
+        xml += '<SoftKeyItem>' \
               '<Name>Previous</Name>' \
               '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '&amp;page=' + str(page - 1) + '</URL>' \
               '<Position>' + ('4' if g.is_79xx else '4') + '</Position>' \
             '</SoftKeyItem>'
 
-    content += '</CiscoIPPhoneDirectory>'
+    xml += '</CiscoIPPhoneDirectory>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.route('/directory/help')
 def directory_help():
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneText>' \
           '<Title>How To Use</Title>' \
           '<Text>Use the keypad or navigation key to select the first letter of the person\'s name.</Text>'
 
     if g.is_79xx:
-        content += '<Prompt>Your current options</Prompt>'
+        xml += '<Prompt>Your current options</Prompt>'
 
-    content += '<SoftKeyItem>' \
+    xml += '<SoftKeyItem>' \
             '<Name>Back</Name>' \
             '<URL>SoftKey:Exit</URL>' \
             '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
           '</SoftKeyItem>' \
         '</CiscoIPPhoneText>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.route('/directory/79xx')
 def directory_menuitem():
     # 79xx series need a menu item before the index
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneMenu>' \
           '<MenuItem>' \
             '<Name>Local Directory</Name>' \
@@ -174,7 +174,7 @@ def directory_menuitem():
           '</MenuItem>' \
         '</CiscoIPPhoneMenu>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.before_request

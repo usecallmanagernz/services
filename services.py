@@ -9,8 +9,8 @@ import re
 from urllib.parse import quote_plus
 from html import escape
 
-from lxml import etree
 import requests
+from lxml import etree
 from flask import Blueprint, Response, request, g
 import config
 
@@ -20,7 +20,7 @@ blueprint = Blueprint('services', __name__)
 
 @blueprint.route('/services')
 def services_menu():
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneMenu>' \
           '<Title>Services</Title>' \
           '<MenuItem>' \
@@ -29,9 +29,9 @@ def services_menu():
           '</MenuItem>'
 
     if g.is_79xx:
-        content += '<Prompt>Your current options</Prompt>'
+        xml += '<Prompt>Your current options</Prompt>'
 
-    content += '<SoftKeyItem>' \
+    xml += '<SoftKeyItem>' \
             '<Name>Exit</Name>' \
             '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
             '<URL>Init:Services</URL>' \
@@ -43,7 +43,7 @@ def services_menu():
           '</SoftKeyItem>' \
         '</CiscoIPPhoneMenu>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.route('/services/parked-calls')
@@ -72,20 +72,20 @@ def parked_calls():
     response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
     response.raise_for_status()
 
-    content = '<?xml version="1.0" encoding="UTF-8"?>' \
+    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
         '<CiscoIPPhoneDirectory>' \
           '<Title>Parked Calls</Title>'
 
     for extension, name in calls:
-        content += '<DirectoryEntry>' \
+        xml += '<DirectoryEntry>' \
               '<Name>' + escape(name) + '</Name>' \
               '<Telephone>' + quote_plus(extension) + '</Telephone>' \
             '</DirectoryEntry>'
 
     if g.is_79xx:
-        content += '<Prompt>Select call</Prompt>'
+        xml += '<Prompt>Select call</Prompt>'
 
-    content += '<SoftKeyItem>' \
+    xml += '<SoftKeyItem>' \
             '<Name>Exit</Name>' \
             '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
             '<URL>' + request.url_root + 'services?name=' + quote_plus(g.device_name) + '</URL>' \
@@ -102,7 +102,7 @@ def parked_calls():
           '</SoftKeyItem>' \
         '</CiscoIPPhoneDirectory>'
 
-    return Response(content, mimetype = 'text/xml'), 200
+    return Response(xml, mimetype = 'text/xml'), 200
 
 
 @blueprint.before_request
