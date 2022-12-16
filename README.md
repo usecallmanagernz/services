@@ -1,4 +1,4 @@
-[![Workflow Status](https://img.shields.io/github/workflow/status/usecallmanagernz/services/python%20lint/master?label=python%20lint)](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml) [![Version](https://img.shields.io/github/v/tag/usecallmanagernz/services?color=blue&label=version&sort=semver)](https://github.com/usecallmanagernz/services/releases) [![Licence](https://img.shields.io/github/license/usecallmanagernz/services?color=red)](https://github.com/usecallmanagernz/services/blob/master/LICENSE)
+[![Python Lint](https://img.shields.io/github/actions/workflow/status/usecallmanagernz/services/pylint.yml?branch=master&label=python%20lint)](https://github.com/usecallmanagernz/services/actions/workflows/pylint.yml) [![Version](https://img.shields.io/github/v/tag/usecallmanagernz/services?color=blue&label=version&sort=semver)](https://github.com/usecallmanagernz/services/releases) [![Licence](https://img.shields.io/github/license/usecallmanagernz/services?color=red)](https://github.com/usecallmanagernz/services/blob/master/LICENSE)
 
 # XML Services
 
