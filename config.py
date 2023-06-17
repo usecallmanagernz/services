@@ -21,7 +21,7 @@ manager_secret = 'asterisk'
 config_file = os.environ.get('SERVICES_CONFIG', 'config.yml')
 
 if os.path.exists(config_file):
-    with open(config_file, 'rt') as file:
+    with open(config_file, 'r', encoding = 'UTF-8') as file:
         document = yaml.safe_load(file)
 
         if document:
