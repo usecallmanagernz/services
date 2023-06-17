@@ -19,6 +19,8 @@ on:
       - '.pylintrc'
       - '.github/workflows/pylint.yml'
 
+  workflow_dispatch:
+
 jobs:
   lint:
     name: Run python linter
