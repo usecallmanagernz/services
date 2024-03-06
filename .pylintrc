@@ -3,7 +3,7 @@ persistent=no
 extension-pkg-whitelist=lxml
 
 [MESSAGES CONTROL]
-disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,bad-whitespace,invalid-name,unused-argument,line-too-long,len-as-condition,duplicate-code,assigning-non-slot
+disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,invalid-name,unused-argument,line-too-long,len-as-condition,duplicate-code,assigning-non-slot,redefined-builtin
 
 [REPORTS]
 output-format=text

@@ -8,6 +8,7 @@ from flask import Flask, Response
 import authentication
 import services
 import directory
+import information
 import problem_report
 
 
@@ -17,6 +18,7 @@ application.config.from_envvar('FLASK_CONFIG', silent = True)
 application.register_blueprint(authentication.blueprint)
 application.register_blueprint(services.blueprint)
 application.register_blueprint(directory.blueprint)
+application.register_blueprint(information.blueprint)
 application.register_blueprint(problem_report.blueprint)
 
 

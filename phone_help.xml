@@ -1,0 +1,464 @@
+<CiscoIPPhoneHelp>
+  <HelpItem>
+    <ID>301</ID>
+    <Title>Redial</Title>
+    <Text>To automatically redial the last number dialed for the selected line, choose Redial.
+
+To redial a number on Line 1, choose Redial.
+
+To redial a number on any line other than Line 1, select the Line first, then choose Redial.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>302</ID>
+    <Title>New Call</Title>
+    <Text>To select a line and hear dial tone, choose NewCall. Use the phone keypad to dial a call.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>303</ID>
+    <Title>Hold</Title>
+    <Text>To place a caller on hold, choose Hold. Once the caller is on hold, you can place a new call if desired.
+
+The call on hold flashes to indicate the hold status. To connect to the caller again, choose Resume.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>304</ID>
+    <Title>Transfer</Title>
+    <Text>To send the caller to another phone:
+
+1. Choose Transfer. This places the caller on hold.
+2. Dial the number to which you want to transfer the call.
+3. When you hear ringing, choose Transfer again and hang up, or when the party answers, announce the call and press Transfer and hang up.
+4. If the party to which you are transferring the call refuses it, press Resume to return to the original call.
+
+If your administrator enabled on-hook call transfer, you can complete the transfer by hanging up the phone. (Pressing EndCall still cancels the transfer.)</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>305</ID>
+    <Title>Call Forward All</Title>
+    <Text>To send all calls destined for your phone to another phone, choose CFwdAll and dial the number to which you want to forward all calls.
+
+Be sure to dial the number exactly as you would if you were calling it. The phone displays the number to which all calls are now forwarded.
+
+To cancel, choose CFwdAll. One tone is played, and then the number to which calls were previously forwarded is erased. Calls are now received at your phone and will not be forwarded.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>308</ID>
+    <ID>1070</ID>
+    <ID>2061</ID>
+    <Title>&lt;&lt; (Backspace)</Title>
+    <Text>To backspace over digits you have dialed, choose &lt;&lt;.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>309</ID>
+    <Title>End Call</Title>
+    <Text>To hang up a call, choose EndCall.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>310</ID>
+    <Title>Resume</Title>
+    <Text>To retrieve a call that has been placed on hold, choose Resume.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>311</ID>
+    <Title>Answer</Title>
+    <Text>To answer an incoming call, choose Answer.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>313</ID>
+    <Title>Conference</Title>
+    <Text>To conference two or more callers:
+
+1. During an active call, press the Confrn button.
+2. Dial another number. The first caller is automatically placed on hold while you are connected to the second caller.
+3. When the second caller is connected to you, choose Confrn again to connect all three parties.
+4. Repeat steps to add more callers to the conference.
+
+Press ConfList to view the participants in the conference.
+
+Depending on how your phone is configured, other locally connected phones may also be granted Administrator privileges when you add them to the conference. 
+
+If you hang up during the conference the other parties will be disconnected from the conference unless there are other Administrators.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>314</ID>
+    <Title>Park</Title>
+    <Text>To store a call at a specified number, choose Park. Make a note of the number at which the call has been parked.
+To retrieve a parked call, go to another phone and dial the number at which the call has been parked. The caller is connected to you.
+There is a limited amount of time to retrieve the parked call before it is disconnected; contact your system administrator for more information.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>316</ID>
+    <Title>Meet Me</Title>
+    <Text>MeetMe conferences allow participants to dial a number to join the call rather than requiring you to call each participant directly.
+
+To establish a MeetMe conference:
+
+1. Press NewCall or lift the receiver.
+2. Press MeetMe.
+3. Dial a MeetMe conference number (see your administrator for a list of valid numbers.)
+4. Inform other attendees what the conference number is, so they can join.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>317</ID>
+    <Title>Pickup</Title>
+    <Text>Pickup allows you to answer a call ringing at another phone in your specified pickup group.
+
+To pick up a call when you hear the call ring on another phone in your group, press Pickup.
+
+If you want to pickup the call on a line other than your primary line, go offhook on that line first, then press Pickup.
+
+Your administrator configures your pickup groups.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>318</ID>
+    <Title>Group Pickup</Title>
+    <Text>Group Pickup (GPickup) allows you to answer a call ringing at another device in another specified pickup group. The phone picks up the longest alerting call in the group.
+To pick up a call:
+
+1. When you hear the call ring on another phone in another group, press GPickup. If you want to pick up the call on a line other than your primary line, go off-hook on that line first, then press GPickup.
+2. Enter the number of the group you wish to pickup.
+
+Your administrator configures your pickup groups and assigns pickup group numbers.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>319</ID>
+    <Title>Remove Last Caller</Title>
+    <Text>If you are a conference administrator, you can drop the last conference participant, by pressing RmLstC.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>320</ID>
+    <Title>CallBack</Title>
+    <Text>When you receive a busy or ringing tone, you can choose to receive a notification when that device becomes available by pressing CallBack. CallBack can only be activated on numbers assigned to local extensions.
+
+You can press CallBack when your phone is idle to see if CallBack is activated.
+
+When the called device becomes available, your phone will play a sound and notification will be displayed on the screen.
+
+Press Dial to call the number.
+Press Cancel to deactivate CallBack. 
+Press Exit to quit that screen.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>322</ID>
+    <Title>Quality Reporting Tool</Title>
+    <Text>To report a call-quality issue press QRT. Statistics about the call will be logged when the call ends.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>327</ID>
+    <Title>Malicious Caller ID</Title>
+    <Text>To report that the current call is suspicious or harrsing press MCID. You can only use MCID while the call is active.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>330</ID>
+    <Title>Conference List</Title>
+    <Text>Conference List allows you to view a list of conference participant. Participants are listed from most recent to first added, the list is not automatically updated; use Update to refresh.
+
+The icons next to the name have the following meaning:
+* Checkmark: Not muted, listening.
+* Unchecked: Muted.
+* Speaker: Currently talking.
+
+Pressing Remove will remove the selected call. Pressing the Mute will toggle the mute status of the selected call. Both features automatically refresh the list.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>331</ID>
+    <Title>Immediate Divert</Title>
+    <Text>iDivert allows you to divert a call ringing on your phone to your voice mailbox</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>334</ID>
+    <Title>Other Pickup</Title>
+    <Text>Other Pickup (OPickup) is similar to Group Pickup (GPickup), except that it will pick up calls to not only your group, but to other associated groups that your administrator has configured, without needing to enter the group number.
+
+To pick up a call using OPickup:
+When you hear the call ring on another phone not in your group press OPickup. If you want to pick up the call on a line other than your primary line, go off-hook on that line first, then press OPickup.
+
+Your administrator configures your other pickup groups.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>335</ID>
+    <Title>Hunt Group</Title>
+    <Text>To log out of a hunt group, press Hlog. The phone displays "Logged out of Hunt Group".
+
+To log in to receive hunt group calls, press Hlog.
+
+Logging out of hunt groups does not prevent non-hunt group calls from ringing your phone.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>369</ID>
+    <Title>Do Not Disturb</Title>
+    <Text>To toggle audible ringing on incoming calls on and off, press DND. When DND is on, the do not disturb feature is on, and the phone does not ring for incoming calls.
+
+When DND is off, the phone rings for incoming calls. The status of the DND feature appears on the phone display.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>371</ID>
+    <Title>Abbrivated Dialing</Title>
+    <Text>To use a speed-dial number associated with your phone, take the phone off-hook and then dial the speed dial number. Then press AbbrDial.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1001</ID>
+    <ID>2005</ID>
+    <Title>Using the Keypad to Choose Items</Title>
+    <Text>Press a number on the keypad to quickly scroll to, select, and display the menu option assigned to the number.
+
+If you meant to request Help for a menu item, press ? and then choose the menu item on the screen.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1012</ID>
+    <Title>Settings</Title>
+    <Text>The Settings key enables you to customize many of your phone&apos;s characteristics and your network administrator to configure and manage your phone.
+
+To customize your phone&apos;s characteristics, choose Settings &gt; User Preferences.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1046</ID>
+    <Title>Save</Title>
+    <Text>Use Save to record the settings you have chosen.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1067</ID>
+    <Title>Edit</Title>
+    <Text>Press Edit to make changes to the setting. Some settings might require administrator access.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1068</ID>
+    <Title>Yes</Title>
+    <Text>Press Yes to enable the feature For information about the feature, press ? followed by the feature you want help on.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1069</ID>
+    <Title>No</Title>
+    <Text>Press No to disable the feature. For information about the feature, press ? followed by the feature you want help on.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1073</ID>
+    <Title>Erase</Title>
+    <Text>Press Erase to restore the settings originally coded into the phone when it was assembled at the factory. When you press Erase, the following happens:
+
+1. Resets configurable options on the User Preferences Menu, the Network Configuration menu, and the Device Configuration menu to their default settings.
+2. Resets volume to its default setting.
+3. Deletes call histories from the call logs.
+4. Resets the phone.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2012</ID>
+    <Title>Directories</Title>
+    <Text>Use the Directories key to access a log of missed, received, and placed calls. You can also access your company&apos;s corporate directory, if available.
+
+Each log can hold up to 100 entries.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2051</ID>
+    <Title>Navigation Up</Title>
+    <Text>Press the Navigation Up key to scroll up through and select different menu options.
+
+An upward arrow on the scroll bar indicates that you can scroll up through additional options</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2052</ID>
+    <Title>Navigation Down</Title>
+    <Text>Press the Navigation Down key to scroll down through and select different menu options.
+
+A downward arrow on the scroll bar indicates that you can scroll down through additional options</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2056</ID>
+    <Title>Clear</Title>
+    <Text>To erase all records from all call logs:
+
+1. Press the Directories key.
+2. Press Clear and all call records are erased.
+
+To erase all records in a single call log:
+
+1. Select the Directories key.
+2. Select Missed Calls,or Placed Calls, or Received Calls.
+3. Choose Options &gt; Clear.
+
+Clear removes all records in a log and Delete removes one record.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2058</ID>
+    <Title>Exit</Title>
+    <Text>Use Exit to move back to the previous screen.
+
+If you are already at the top level, pressing Exit brings you back to the main phone screen.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2059</ID>
+    <Title>Dial</Title>
+    <Text>Choose Dial to call a number that you entered using the keypad or chose from the call logs or phone directories.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2060</ID>
+    <Title>Edit Dial</Title>
+    <Text>Use EditDial to add digits to the front of the number.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2065</ID>
+    <Title>More</Title>
+    <Text>Use More to display additional softkey options.
+
+Using More cycles you through all available options</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>1015</ID>
+    <ID>2067</ID>
+    <Title>Select</Title>
+    <Text>Use Select to choose and display a menu option.
+
+Use the Navigation button to scroll through the list of options before selecting one to display.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2083</ID>
+    <Title>Details</Title>
+    <Text>Use Details to view the details of a selected call log entry</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>2088</ID>
+    <Title>Delete</Title>
+    <Text>Use Delete to delete an individual directory entry.
+
+Use Clear to clear out all records in the selected directory.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>3012</ID>
+    <Title>Services</Title>
+    <Text>Use the Services key access any web-based services provisioned for your phone. These services are customized features provided to you by your company.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>3016</ID>
+    <Title>Cancel</Title>
+    <Text>Use Cancel if you do not want to save the changes you have made.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>3017</ID>
+    <Title>Update</Title>
+    <Text>Use Update to refresh the service content and obtain the latest available information for frequently-changing services.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>3019</ID>
+    <Title>Next</Title>
+    <Text>Use Next to move to the next available content screen within this service.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>4000</ID>
+    <ID>4003</ID>
+    <Title>Information</Title>
+    <Text>The Info or Help key can be used to request a help page for any of the keys on the phone.
+
+Press the info key and then press the hard or soft key to see any information about that feature.
+
+If the key is pressed twice quickly while a call is active, statistics will be displayed about that call.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>5012</ID>
+    <Title>Messages</Title>
+    <Text>The Messages key provides you access to your voice mailbox.
+
+If you have any unheard voice messages the light on your handset will be red.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8000</ID>
+    <ID>8001</ID>
+    <ID>8002</ID>
+    <ID>8003</ID>
+    <ID>8004</ID>
+    <ID>8005</ID>
+    <ID>8006</ID>
+    <ID>8007</ID>
+    <ID>8008</ID>
+    <ID>8009</ID>
+    <ID>8010</ID>
+    <ID>8011</ID>
+    <Title>Using the Keypad to Dial Numbers</Title>
+    <Text>Press numbers on the keypad to enter a phone number.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8012</ID>
+    <Title>Line Keys</Title>
+    <Text>Press a Line key to switch to that line, make a new call on that line, or answer a call ringing on that line. The color the key display indicates the status of that line:
+
+* Off: no activity on this line.
+* Green, steady: Active call on this line.
+* Green, blinking: Call on hold on this line.
+* Orange, blinking:  Incoming call ringing on this line.
+
+Your system administrator controls which buttons are configured as lines and which ones can be configured as speed dial, BLF speed dial, service, or feature buttons.
+
+If you have an active call, and press a button for a different line, your call will automatically be placed on hold. If you press the button for the line you are on, the phone screen minimizes and you see a call summary.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8087</ID>
+    <Title>Placed Calls Log</Title>
+    <Text>When the phone is idle, pressing the Up or Down navigation buttons will show the entries in your Placed Calls log.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8125</ID>
+    <ID>8126</ID>
+    <ID>8127</ID>
+    <ID>8128</ID>
+    <ID>8129</ID>
+    <Title>BLF Speed Dial</Title>
+    <Text>This button has been configured as a BLF Speed Dial key. To go off hook and dial this number, press the Speed Dial key. The color the key display indicates the status of that line:
+
+* Off: no activity on this phone.
+* Orange, blinking: Call ringing on that phone, press the key to pickup that call.
+* Red, steady: Phone is in use.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8164</ID>
+    <Title>Navigation Left</Title>
+    <Text>Use the Nav Left button to scroll left to backspace or delete over entered characters.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>8165</ID>
+    <Title>Navigation Right</Title>
+    <Text>Use the Navigation Right button to scroll right to backspace or delete over entered characters</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>9000</ID>
+    <Title>Headset</Title>
+    <Text>The Headset button allows you to use a headset with your phone. You must connect a compatible headset to your phone before using this button. Your phone supports four or six-wire headset jacks.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>9001</ID>
+    <Title>Mute</Title>
+    <Text>Press Mute to prevent the other parties on a call from hearing you. You can still listen to the call, but to be heard you must press the Mute button again.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>9002</ID>
+    <Title>Speaker</Title>
+    <Text>Use the Speaker key to enable speakerphone mode and:
+
+* Make calls
+* Answer calls
+* End calls
+* Toggle from handset mode to speakerphone mode during a call. If the speaker button is lit when you press Speaker, you disconnect the call.
+
+When you use speakerphone mode, you still have access to all the call features you have when using handset mode, such as Hold and Transfer.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>9003</ID>
+    <ID>9004</ID>
+    <Title>Volume Up/Down</Title>
+    <Text>You can adjust call volume for handset mode, speakerphone mode, and headset mode independently, without affecting the other modes. When you are in a call or hear a dial tone:
+
+* Press the Volume Up button (+) to increase the call volume.
+* Press the Volume Down button (-) to decrease the call volume.
+
+* The volume adjusts only for the active mode (handset, speakerphone, or headset).
+* Press Save to keep this setting for future calls. If you do not Save, the volume change affects only this call.
+* If you adjust the Volume buttons when none of these modes are in use, you are adjusting the ringer volume.</Text>
+  </HelpItem>
+  <HelpItem>
+    <ID>9014</ID>
+    <Title>Display</Title>
+    <Text>To disable the touchscreen, press and hold the Display key for more than one second.
+
+The display key flashes green while the touchscreen is disabled and the phone displays &quot;Touch Screen Disabled.&quot;. The touchscreen will only remain disabled for one minute, after which it will enable itself again automatically.
+
+Pressing the Display key will also turn on the screen if the phone was in power saving mode.</Text>
+  </HelpItem>
+</CiscoIPPhoneHelp>

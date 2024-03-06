@@ -11,6 +11,7 @@ Endpoints provided are:
 * `/services` - Simple menu that can show the currently parked calls.
 * `/directory` - Local directory that uses voicemail.conf.
 * `/directory/79xx` - 7900 series need MenuItem before loading /directory.
+* `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
 
 Settings for the application are loaded from `config.yml`, the location of
@@ -35,11 +36,25 @@ You can use the packages provided by your OS distribution or run
 The following commands are for Apache on Ubuntu, you may need to adjust some
 them for a different distributions.
 
+Copy files and create a virtual-host for services via HTTP:
+
 ```
 sudo mkdir -p /var/www/services
 sudo cp *.py *.wsgi /var/www/services
 sudo cp virtualhost.conf /etc/apache2/sites-available/xml-services
 sudo a2ensite xml-services
+```
+
+Optionally, to enable secure services virtual-host via HTTPS.
+
+```
+sudo cp virtualhost-ssl.conf /etc/apache2/sites-available/secure-xml-services
+sudo a2ensite secure-xml-services
+```
+
+Restart apache.
+
+```
 sudo systemctl restart apache2
 ```
 
