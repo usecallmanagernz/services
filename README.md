@@ -60,3 +60,18 @@ sudo systemctl restart apache2
 
 See [HTTP Provisioning](https://usecallmanager.nz/apache-conf.html#XML-Services)
 for more information.
+
+The Asterisk Manager web interface also needs to be enabled in
+`/etc/asterisk/manager.conf` and a user added with the credentials from `config.yml`.
+
+```
+[general]
+...
+enabled=yes
+webenabled=yes
+
+[asterisk]
+secret=asterisk
+read=all
+...
+```
