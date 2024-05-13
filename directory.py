@@ -4,7 +4,6 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
-import os.path
 import re
 from math import ceil
 from urllib.parse import quote_plus
@@ -180,8 +179,6 @@ def directory_menuitem():
 @blueprint.before_request
 def before_request():
     g.is_79xx = re.search(r'(?x) ^ CP-79', request.headers.get('X-CiscoIPPhoneModelName', ''))
-
-    return None
 
 
 @blueprint.errorhandler(Exception)

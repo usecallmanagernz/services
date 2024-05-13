@@ -4,13 +4,11 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
-import os.path
 import re
 from html import escape
 
 from lxml import etree
-from flask import Blueprint, Response, request, g
-import config
+from flask import Blueprint, Response, request
 
 
 blueprint = Blueprint('information', __name__)
@@ -24,6 +22,10 @@ def help_information():
         return Response('Invalid id', mimetype = 'text/plain'), 500
 
     document = etree.parse('./phone_help.xml')
+
+    if not document:
+        return Response('XML error', mimetype = 'text/plain'), 500
+
     element = document.find(f'HelpItem[ID="{id}"]')
 
     if element:
