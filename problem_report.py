@@ -7,7 +7,7 @@
 import re
 from datetime import datetime
 
-from flask import Blueprint, Response, request, g
+from flask import Blueprint, Response, request
 import config
 
 
