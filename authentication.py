@@ -25,20 +25,6 @@ def cgi_authentication():
     return Response('AUTHORIZED', mimetype = 'text/plain'), 200
 
 
-@blueprint.before_request
-def before_request():
-    device_name = request.args.get('devicename', '')
-
-    # check that the device name is valid
-    if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name) or \
-       not os.path.exists(f'{config.tftpboot_dir}/{device_name}.cnf.xml'):
-        return Response('ERROR'), 403
-
-    g.device_name = device_name
-
-    return None
-
-
 @blueprint.errorhandler(Exception)
 def error_handler(error):
     return Response('ERROR', mimetype = 'text/plain'), 500

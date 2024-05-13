@@ -48,19 +48,6 @@ def help_information():
     return Response(xml, mimetype = 'text/xml'), 200
 
 
-@blueprint.before_request
-def before_request():
-    device_name = request.args.get('name', '')
-
-    if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name) or \
-       not os.path.exists(f'{config.tftpboot_dir}/{device_name}.cnf.xml'):
-        return Response('Invalid device', mimetype = 'text/plain'), 500
-
-    g.device_name = device_name
-
-    return None
-
-
 @blueprint.errorhandler(Exception)
 def error_handler(error):
     return Response(str(error), mimetype = 'text/plain'), 500

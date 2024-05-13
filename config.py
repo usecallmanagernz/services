@@ -8,7 +8,6 @@ import os.path
 import yaml
 
 
-tftpboot_dir = '/var/lib/tftpboot'
 reports_dir = '/var/log/cisco'
 
 cgi_username = 'cisco'
@@ -25,7 +24,6 @@ if os.path.exists(config_file):
         document = yaml.safe_load(file)
 
         if document:
-            tftpboot_dir = document.get('tftpboot-dir', tftpboot_dir)
             reports_dir = document.get('reports-dir', reports_dir)
 
             cgi_username = document.get('cgi-username', cgi_username)

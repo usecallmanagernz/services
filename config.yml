@@ -1,11 +1,6 @@
 # This file contains the config needed for the phone XML services
 # you can override the defalt location by setting the environment
 # variable SERVIES_CONFIG.
-#
-# Location of the SEPMAC.cnf.xml provisioning files, this is used
-# to verify that the supplied device name is valid.
-#
-# tftpboot-dir: /var/lib/tftpboot
 
 # Where to write logs from the problem report tool.
 #

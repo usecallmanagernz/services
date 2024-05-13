@@ -28,7 +28,7 @@ def directory_index():
     for index in ('1', '2ABC', '3DEF', '4GHI', '5JKL', '6MNO', '7PRQS', '8TUV', '9WXYZ', '0'):
         xml += '<MenuItem>' \
             '<Name>' + escape(index) + '</Name>' \
-            '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '</URL>' \
+            '<URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '</URL>' \
           '</MenuItem>'
 
     if g.is_79xx:
@@ -47,7 +47,7 @@ def directory_index():
           '<SoftKeyItem>' \
             '<Name>Help</Name>' \
             '<Position>' + ('2' if g.is_79xx else '3') + '</Position>' \
-            '<URL>' + request.url_root + 'directory/help?name=' + quote_plus(g.device_name) + '</URL>' \
+            '<URL>' + request.url_root + 'directory/help</URL>' \
           '</SoftKeyItem>' \
         '</CiscoIPPhoneMenu>'
 
@@ -75,13 +75,13 @@ def directory_entries():
     entries = []
 
     for element in document.findall('response/generic[@event="VoicemailUserEntry"]'):
-        extension = element.get('voicemailbox')
+        mailbox = element.get('voicemailbox')
         name = element.get('fullname', '')
 
         if name[0].upper() not in index:
             continue
 
-        entries.append((extension, name))
+        entries.append((mailbox, name))
 
     entries.sort(key = lambda entry: entry[1])
 
@@ -104,10 +104,10 @@ def directory_entries():
         '<CiscoIPPhoneDirectory>' \
           '<Title>' + escape(index) + (' ' + str(page) + '/' + str(pages) if pages > 1 else '') + '</Title>'
 
-    for extension, name in entries[(page - 1) * 10:page * 10]:
+    for mailbox, name in entries[(page - 1) * 10:page * 10]:
         xml += '<DirectoryEntry>' \
               '<Name>' + escape(name) + '</Name>' \
-              '<Telephone>' + quote_plus(extension) + '</Telephone>' \
+              '<Telephone>' + quote_plus(mailbox) + '</Telephone>' \
             '</DirectoryEntry>'
 
     if g.is_79xx:
@@ -116,7 +116,7 @@ def directory_entries():
     xml += '<SoftKeyItem>' \
           '<Name>Exit</Name>' \
           '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
-          '<URL>' + request.url_root + 'directory?name=' + quote_plus(g.device_name) + '</URL>' \
+          '<URL>' + request.url_root + 'directory</URL>' \
         '</SoftKeyItem>' \
         '<SoftKeyItem>' \
           '<Name>' + ('Dial' if g.is_79xx else 'Call') + '</Name>' \
@@ -127,14 +127,14 @@ def directory_entries():
     if page < pages:
         xml += '<SoftKeyItem>' \
               '<Name>Next</Name>' \
-              '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '&amp;page=' + str(page + 1) + '</URL>' \
+              '<URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '&amp;page=' + str(page + 1) + '</URL>' \
               '<Position>' + ('2' if g.is_79xx else '3') + '</Position>' \
             '</SoftKeyItem>'
 
     if page > 1:
         xml += '<SoftKeyItem>' \
               '<Name>Previous</Name>' \
-              '<URL>' + request.url_root + 'directory/entries?name=' + quote_plus(g.device_name) + '&amp;index=' + quote_plus(index) + '&amp;page=' + str(page - 1) + '</URL>' \
+              '<URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '&amp;page=' + str(page - 1) + '</URL>' \
               '<Position>' + ('4' if g.is_79xx else '4') + '</Position>' \
             '</SoftKeyItem>'
 
@@ -170,7 +170,7 @@ def directory_menuitem():
         '<CiscoIPPhoneMenu>' \
           '<MenuItem>' \
             '<Name>Local Directory</Name>' \
-            '<URL>' + request.url_root + 'directory?name=' + quote_plus(g.device_name) + '</URL>' \
+            '<URL>' + request.url_root + 'directory</URL>' \
           '</MenuItem>' \
         '</CiscoIPPhoneMenu>'
 
@@ -179,13 +179,6 @@ def directory_menuitem():
 
 @blueprint.before_request
 def before_request():
-    device_name = request.args.get('name', '')
-
-    if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name) or \
-       not os.path.exists(f'{config.tftpboot_dir}/{device_name}.cnf.xml'):
-        return Response('Invalid device', mimetype = 'text/plain'), 500
-
-    g.device_name = device_name
     g.is_79xx = re.search(r'(?x) ^ CP-79', request.headers.get('X-CiscoIPPhoneModelName', ''))
 
     return None
