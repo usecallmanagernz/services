@@ -16,7 +16,8 @@ blueprint = Blueprint('problem_report', __name__)
 
 @blueprint.route('/problem-report', methods = ['POST'])
 def problem_report():
-    device_name = request.form.get('devicename', '')
+    # Phones now put a leading newline for multipart/form-data variables
+    device_name = request.form.get('devicename', '').strip()
 
     if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name):
         return Response('Invalid device', mimetype = 'text/plain'), 403
