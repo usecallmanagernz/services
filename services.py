@@ -19,28 +19,28 @@ blueprint = Blueprint('services', __name__)
 
 @blueprint.route('/services')
 def services_menu():
-    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<CiscoIPPhoneMenu>' \
-          '<Title>Services</Title>' \
-          '<MenuItem>' \
-            '<Name>Parked Calls</Name>' \
-            '<URL>' + request.url_root + 'services/parked-calls</URL>' \
-          '</MenuItem>'
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<CiscoIPPhoneMenu>\n'
+           '  <Title>Services</Title>\n'
+           '    <MenuItem>\n'
+           '    <Name>Parked Calls</Name>\n'
+           '    <URL>' + request.url_root + 'services/parked-calls</URL>\n'
+           '  </MenuItem>\n')
 
     if g.is_79xx:
-        xml += '<Prompt>Your current options</Prompt>'
+        xml += '  <Prompt>Your current options</Prompt>\n'
 
-    xml += '<SoftKeyItem>' \
-            '<Name>Exit</Name>' \
-            '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
-            '<URL>Init:Services</URL>' \
-          '</SoftKeyItem>' \
-          '<SoftKeyItem>' \
-            '<Name>Select</Name>' \
-            '<Position>' + ('1' if g.is_79xx else '2') + '</Position>' \
-            '<URL>SoftKey:Select</URL>' \
-          '</SoftKeyItem>' \
-        '</CiscoIPPhoneMenu>'
+    xml += ('  <SoftKeyItem>\n'
+            '    <Name>Exit</Name>\n'
+            '    <Position>' + ('3' if g.is_79xx else '1') + '</Position>\n'
+            '    <URL>Init:Services</URL>\n'
+            '  </SoftKeyItem>\n'
+            '  <SoftKeyItem>\n'
+            '    <Name>Select</Name>\n'
+            '    <Position>' + ('1' if g.is_79xx else '2') + '</Position>\n'
+            '    <URL>SoftKey:Select</URL>\n'
+            '  </SoftKeyItem>\n'
+            '</CiscoIPPhoneMenu>\n')
 
     return Response(xml, mimetype = 'text/xml'), 200
 
@@ -71,35 +71,35 @@ def parked_calls():
     response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
     response.raise_for_status()
 
-    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<CiscoIPPhoneDirectory>' \
-          '<Title>Parked Calls</Title>'
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<CiscoIPPhoneDirectory>\n'
+           '  <Title>Parked Calls</Title>\n')
 
     for extension, name in calls:
-        xml += '<DirectoryEntry>' \
-              '<Name>' + escape(name) + '</Name>' \
-              '<Telephone>' + quote_plus(extension) + '</Telephone>' \
-            '</DirectoryEntry>'
+        xml += ('<DirectoryEntry>\n'
+                '  <Name>' + escape(name) + '</Name>\n'
+                '  <Telephone>' + quote_plus(extension) + '</Telephone>\n'
+                '</DirectoryEntry>\n')
 
     if g.is_79xx:
-        xml += '<Prompt>Select call</Prompt>'
+        xml += '  <Prompt>Select call</Prompt>\n'
 
-    xml += '<SoftKeyItem>' \
-            '<Name>Exit</Name>' \
-            '<Position>' + ('3' if g.is_79xx else '1') + '</Position>' \
-            '<URL>' + request.url_root + 'services</URL>' \
-          '</SoftKeyItem>' \
-          '<SoftKeyItem>' \
-            '<Name>' + ('Dial' if g.is_79xx else 'Call') + '</Name>' \
-            '<Position>' + ('1' if g.is_79xx else '2') + '</Position>' \
-            '<URL>SoftKey:Select</URL>' \
-          '</SoftKeyItem>' \
-          '<SoftKeyItem>' \
-            '<Name>Update</Name>' \
-            '<Position>' + ('2' if g.is_79xx else '3') + '</Position>' \
-            '<URL>SoftKey:Update</URL>' \
-          '</SoftKeyItem>' \
-        '</CiscoIPPhoneDirectory>'
+    xml += ('  <SoftKeyItem>\n'
+            '    <Name>Exit</Name>\n'
+            '    <Position>' + ('3' if g.is_79xx else '1') + '</Position>\n'
+            '    <URL>' + request.url_root + 'services</URL>\n'
+            '  </SoftKeyItem>\n'
+            '  <SoftKeyItem>\n'
+            '    <Name>' + ('Dial' if g.is_79xx else 'Call') + '</Name>\n'
+            '    <Position>' + ('1' if g.is_79xx else '2') + '</Position>\n'
+            '    <URL>SoftKey:Select</URL>\n'
+            '  </SoftKeyItem>\n'
+            '  <SoftKeyItem>\n'
+            '    <Name>Update</Name>\n'
+            '    <Position>' + ('2' if g.is_79xx else '3') + '</Position>\n'
+            '    <URL>SoftKey:Update</URL>\n'
+            '  </SoftKeyItem>\n'
+            '</CiscoIPPhoneDirectory>\n')
 
     return Response(xml, mimetype = 'text/xml'), 200
 

@@ -13,6 +13,7 @@ Endpoints provided are:
 * `/directory/79xx` - 7900 series need MenuItem before loading /directory.
 * `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
+* /quality-report - Record information when QRT in selected.
 
 Settings for the application are loaded from `config.yml`, the location of
 this file can be changed by setting the `SERVICES_CONFIG` environment
@@ -74,4 +75,12 @@ webenabled=yes
 secret=asterisk
 read=all
 ...
+```
+
+Create a directory to store quality and problem report logs. A different path
+may be specified in `config.yml`.
+
+```
+mkdir /var/log/cisco
+chown www-data:www-data /var/log/cisco
 ```

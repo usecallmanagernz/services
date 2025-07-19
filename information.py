@@ -35,17 +35,17 @@ def help_information():
         title = 'Information'
         text = 'Sorry, no help on that topic.'
 
-    xml = '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<CiscoIPPhoneText>' \
-          '<Title>' + escape(title) + '</Title>' \
-          '<Text>' + escape(text) + '</Text>' \
-          '<Prompt>Your current options</Prompt>' \
-          '<SoftKeyItem>' \
-            '<Name>Exit</Name>' \
-            '<Position>3</Position>' \
-            '<URL>Key:Info</URL>' \
-          '</SoftKeyItem>' \
-        '</CiscoIPPhoneText>'
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<CiscoIPPhoneText>\n'
+           '  <Title>' + escape(title) + '</Title>\n'
+           '  <Text>' + escape(text) + '</Text>\n'
+           '  <Prompt>Your current options</Prompt>\n'
+           '  <SoftKeyItem>\n'
+           '    <Name>Exit</Name>\n'
+           '    <Position>3</Position>\n'
+           '    <URL>Key:Info</URL>\n'
+           '  </SoftKeyItem>\n'
+           '</CiscoIPPhoneText>\n')
 
     return Response(xml, mimetype = 'text/xml'), 200
 

@@ -16,7 +16,7 @@ blueprint = Blueprint('problem_report', __name__)
 
 @blueprint.route('/problem-report', methods = ['POST'])
 def problem_report():
-    # Phones now put a leading newline for multipart/form-data variables
+    # Newer firmware now puts a leading newline for multipart/form-data variables
     device_name = request.form.get('devicename', '').strip()
 
     if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name):
@@ -28,7 +28,8 @@ def problem_report():
         return Response('Missing problem report', mimetype = 'text/plain'), 500
 
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    prt_file.save(f'{config.reports_dir}/{device_name}-{timestamp}.tar.gz')
+
+    prt_file.save(f'{config.reports_dir}/prt-{device_name}-{timestamp}.tar.gz')
 
     return Response('Log saved', mimetype = 'text/plain'), 200
 
