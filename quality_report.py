@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2020 Gareth Palmer <gareth.palmer3@gmail.com>
+# Copyright (c) 2025 Gareth Palmer <gareth.palmer3@gmail.com>
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
@@ -10,6 +10,8 @@ from html import escape
 from datetime import datetime
 import json
 
+import requests
+from lxml import etree
 from flask import Blueprint, Response, request, g
 import config
 
@@ -68,11 +70,56 @@ def quality_report_send():
     if not re.search(r'(?x) ^ SEP [0-9A-F]{12} $', device_name):
         return Response('Invalid device', mimetype = 'text/plain'), 403
 
+    session = requests.Session()
+
+    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Login',
+                                                                      'Username': config.manager_username,
+                                                                      'Secret': config.manager_secret})
+    response.raise_for_status()
+
+    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPPeers'})
+    response.raise_for_status()
+
+    document = etree.fromstring(response.content)
+    element = document.find('response/generic[@event="SIPPeer"]/[@devicename="' + device_name + '"]')
+
+    ip_address = None
+    status = None
+
+    rtp_rx_stat = None
+    rtp_tx_stat = None
+
+    if element is not None:
+        peer_name = element.get('name')
+
+        response = session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPShowPeer',
+                                                                          'Peer': peer_name})
+        response.raise_for_status()
+
+        document = etree.fromstring(response.content)
+        element = document.find('response/generic[@name]')
+
+        if element is not None:
+            ip_address = element.get('ipaddress')
+            status = element.get('status')
+
+            rtp_rx_stat = element.get('rtprxstat')
+            rtp_tx_stat = element.get('rtptxstat')
+
+    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
+    response.raise_for_status()
+
     reason = request.args.get('reason', '')
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     with open(f'{config.reports_dir}/qrt-{device_name}.json', 'a', encoding='utf-8') as file:
-        file.write(json.dumps({'timestamp': timestamp, 'reason': REPORT_REASONS.get(reason, '')}) + "\n")
+        file.write(json.dumps({
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'ip_address': ip_address,
+            'status': status,
+            'reason': REPORT_REASONS.get(reason, ''),
+            'rtp_rx_stat': rtp_rx_stat,
+            'rtp_tx_stat': rtp_tx_stat,
+        }) + "\n")
 
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<CiscoIPPhoneText>\n'
