@@ -22,7 +22,7 @@ variable.
 Additional settings for Flask can be specified in the `FLASK_CONFIG`
 environment variable.
 
-See [Phone Services](http://usecallmanager.nz/phone-services.html) for
+See [Phone Services](https://usecallmanager.nz/phone-services.html) for
 more information.
 
 ## Requirements
