@@ -13,7 +13,7 @@ Endpoints provided are:
 * `/directory/79xx` - 7900 series need MenuItem before loading /directory.
 * `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
-* /quality-report - Record information when QRT in selected.
+* `/quality-report` - Record information when QRT in selected.
 
 Settings for the application are loaded from `config.yml`, the location of
 this file can be changed by setting the `SERVICES_CONFIG` environment
@@ -22,7 +22,7 @@ variable.
 Additional settings for Flask can be specified in the `FLASK_CONFIG`
 environment variable.
 
-See [Phone Services](http://usecallmanager.nz/phone-services-xml.html) for
+See [Phone Services](http://usecallmanager.nz/phone-services.html) for
 more information.
 
 ## Requirements
@@ -59,7 +59,7 @@ Restart apache.
 sudo systemctl restart apache2
 ```
 
-See [HTTP Provisioning](https://usecallmanager.nz/apache-conf.html#XML-Services)
+See [HTTP Provisioning](https://usecallmanager.nz/http-provisioning.html#XML-Services)
 for more information.
 
 The Asterisk Manager web interface also needs to be enabled in
