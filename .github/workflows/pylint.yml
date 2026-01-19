@@ -5,19 +5,22 @@ on:
     branches:
       - master
     paths:
-      - '*.py'
-      - '*.wsgi'
-      - '.pylintrc'
-      - '.github/workflows/pylint.yml'
+      - "*.py"
+      - "*.wsgi"
+      - ".pylintrc"
+      - ".github/workflows/pylint.yml"
 
   pull_request:
     branches:
       - master
     paths:
-      - '*.py'
-      - '*.wsgi'
-      - '.pylintrc'
-      - '.github/workflows/pylint.yml'
+      - "*.py"
+      - "*.wsgi"
+      - ".pylintrc"
+      - ".github/workflows/pylint.yml"
+
+  schedule:
+    - cron: "0 8 1 * *"
 
   workflow_dispatch:
 
