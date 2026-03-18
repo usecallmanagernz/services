@@ -77,34 +77,25 @@ def quality_report_send():
                                                                       'Secret': config.manager_secret})
     response.raise_for_status()
 
-    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPPeers'})
+    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPShowPeer',
+                                                                      'DeviceName': device_name})
     response.raise_for_status()
 
     document = etree.fromstring(response.content)
-    element = document.find('response/generic[@event="SIPPeer"]/[@devicename="' + device_name + '"]')
-
-    ip_address = None
-    status = None
-
-    rtp_rx_stat = None
-    rtp_tx_stat = None
+    element = document.find('response/generic')
 
     if element is not None:
-        peer_name = element.get('name')
+        ip_address = element.get('ipaddress')
+        status = element.get('status')
 
-        response = session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPShowPeer',
-                                                                          'Peer': peer_name})
-        response.raise_for_status()
+        rtp_rx_stat = element.get('rtprxstat')
+        rtp_tx_stat = element.get('rtptxstat')
+    else:
+        ip_address = None
+        status = None
 
-        document = etree.fromstring(response.content)
-        element = document.find('response/generic[@name]')
-
-        if element is not None:
-            ip_address = element.get('ipaddress')
-            status = element.get('status')
-
-            rtp_rx_stat = element.get('rtprxstat')
-            rtp_tx_stat = element.get('rtptxstat')
+        rtp_rx_stat = None
+        rtp_tx_stat = None
 
     response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
     response.raise_for_status()

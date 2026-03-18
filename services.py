@@ -64,6 +64,9 @@ def parked_calls():
         extension = element.get('exten')
         name = element.get('calleridname') or element.get('calleridnum')
 
+        if not len(name):
+            name = "Anonymous"
+
         calls.append((extension, name))
 
     calls.sort(key = lambda call: call[0])

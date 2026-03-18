@@ -77,7 +77,7 @@ def directory_entries():
         mailbox = element.get('voicemailbox')
         name = element.get('fullname', '')
 
-        if name[0].upper() not in index:
+        if not len(name) or name[0].upper() not in index:
             continue
 
         entries.append((mailbox, name))
