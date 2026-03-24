@@ -61,11 +61,8 @@ def parked_calls():
     calls = []
 
     for element in document.findall('response/generic[@event="ParkedCall"]'):
-        extension = element.get('exten')
-        name = element.get('calleridname') or element.get('calleridnum')
-
-        if not len(name):
-            name = "Anonymous"
+        extension = element.get('parkingspace')
+        name = element.get('parkeecalleridname', element.get('parkeecalleridnum', 'Anonymous'))
 
         calls.append((extension, name))
 

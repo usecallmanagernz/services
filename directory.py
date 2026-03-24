@@ -27,7 +27,7 @@ def directory_index():
     for index in ('1', '2ABC', '3DEF', '4GHI', '5JKL', '6MNO', '7PRQS', '8TUV', '9WXYZ', '0'):
         xml += ('  <MenuItem>\n'
                 '    <Name>' + escape(index) + '</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '</URL>\n'
                 '  </MenuItem>\n')
 
     if g.is_79xx:
@@ -53,11 +53,9 @@ def directory_index():
     return Response(xml, mimetype = 'text/xml'), 200
 
 
-@blueprint.route('/directory/entries')
-def directory_entries():
-    index = request.args.get('index', '')
-
-    if not len(index):
+@blueprint.route('/directory/entries/<index>')
+def directory_entries(index):
+    if not re.search(r'(?x) ^ [A-Z0-9]+ $', index):
         return directory_index()
 
     session = requests.Session()
@@ -126,14 +124,14 @@ def directory_entries():
     if page < pages:
         xml += ('  <SoftKeyItem>\n'
                 '    <Name>Next</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '&amp;page=' + str(page + 1) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '?page=' + str(page + 1) + '</URL>\n'
                 '    <Position>' + ('2' if g.is_79xx else '3') + '</Position>\n'
                 '  </SoftKeyItem>\n')
 
     if page > 1:
         xml += ('  <SoftKeyItem>\n'
                 '    <Name>Previous</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries?index=' + quote_plus(index) + '&amp;page=' + str(page - 1) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '?page=' + str(page - 1) + '</URL>\n'
                 '    <Position>' + ('4' if g.is_79xx else '4') + '</Position>\n'
                 '  </SoftKeyItem>\n')
 
