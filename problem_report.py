@@ -4,10 +4,14 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
+import sys
+import os
 import re
+import traceback
 from datetime import datetime
 
 from flask import Blueprint, Response, request
+
 import config
 
 
@@ -27,6 +31,9 @@ def problem_report():
     if prt_file is None:
         return Response('Missing problem report', mimetype = 'text/plain'), 500
 
+    if not os.path.exists(config.reports_dir):
+        return Response('Invalid reports directory', mimetype = 'textplain'), 500
+
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
     prt_file.save(f'{config.reports_dir}/prt-{device_name}-{timestamp}.tar.gz')
@@ -36,4 +43,6 @@ def problem_report():
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
+    traceback.print_exc(file = sys.stderr)
+
     return Response(str(error), mimetype = 'text/plain'), 500

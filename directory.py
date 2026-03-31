@@ -4,7 +4,9 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
+import sys
 import re
+import traceback
 from math import ceil
 from urllib.parse import quote_plus
 from html import escape
@@ -12,6 +14,7 @@ from html import escape
 import requests
 from lxml import etree
 from flask import Blueprint, Response, request, g
+
 import config
 
 
@@ -19,7 +22,7 @@ blueprint = Blueprint('directory', __name__)
 
 
 @blueprint.route('/directory')
-def directory_index():
+def get_index():
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<CiscoIPPhoneMenu>\n'
            '  <Title>Local Directory</Title>\n')
@@ -27,7 +30,7 @@ def directory_index():
     for index in ('1', '2ABC', '3DEF', '4GHI', '5JKL', '6MNO', '7PRQS', '8TUV', '9WXYZ', '0'):
         xml += ('  <MenuItem>\n'
                 '    <Name>' + escape(index) + '</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + '</URL>\n'
                 '  </MenuItem>\n')
 
     if g.is_79xx:
@@ -53,23 +56,16 @@ def directory_index():
     return Response(xml, mimetype = 'text/xml'), 200
 
 
-@blueprint.route('/directory/entries/<index>')
-def directory_entries(index):
+@blueprint.route('/directory/mailboxes/<index>')
+def list_mailboxes(index):
     if not re.search(r'(?x) ^ [A-Z0-9]+ $', index):
         return directory_index()
 
-    session = requests.Session()
-
-    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Login',
-                                                                      'Username': config.manager_username,
-                                                                      'Secret': config.manager_secret})
-    response.raise_for_status()
-
-    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'VoicemailUsersList'})
+    response = g.session.get(config.manager_url, timeout = 5, params = {'Action': 'VoicemailUsersList'})
     response.raise_for_status()
 
     document = etree.fromstring(response.content)
-    entries = []
+    mailboxes = []
 
     for element in document.findall('response/generic[@event="VoicemailUserEntry"]'):
         mailbox = element.get('voicemailbox')
@@ -78,15 +74,12 @@ def directory_entries(index):
         if not len(name) or name[0].upper() not in index:
             continue
 
-        entries.append((mailbox, name))
+        mailboxes.append((mailbox, name))
 
-    entries.sort(key = lambda entry: entry[1])
+    mailboxes.sort(key = lambda mailbox: mailbox[1])
 
-    response = session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
-    response.raise_for_status()
-
-    # 10 entries per page
-    pages = ceil(len(entries) / 10)
+    # 10 mailboxes per page
+    pages = ceil(len(mailboxes) / 10)
 
     try:
         page = int(request.args.get('page', '1'))
@@ -99,9 +92,9 @@ def directory_entries(index):
 
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<CiscoIPPhoneDirectory>\n'
-           '  <Title>' + escape(index) + (' ' + str(page) + '/' + str(pages) if pages > 1 else '') + '</Title>\n')
+           '  <Title>' + escape(index) + (f' {page}/{pages}' if pages > 1 else '') + '</Title>\n')
 
-    for mailbox, name in entries[(page - 1) * 10:page * 10]:
+    for mailbox, name in mailboxes[(page - 1) * 10:page * 10]:
         xml += ('  <DirectoryEntry>\n'
                 '    <Name>' + escape(name) + '</Name>\n'
                 '    <Telephone>' + quote_plus(mailbox) + '</Telephone>\n'
@@ -124,14 +117,14 @@ def directory_entries(index):
     if page < pages:
         xml += ('  <SoftKeyItem>\n'
                 '    <Name>Next</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '?page=' + str(page + 1) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + f'?page={page + 1}' + '</URL>\n'
                 '    <Position>' + ('2' if g.is_79xx else '3') + '</Position>\n'
                 '  </SoftKeyItem>\n')
 
     if page > 1:
         xml += ('  <SoftKeyItem>\n'
                 '    <Name>Previous</Name>\n'
-                '    <URL>' + request.url_root + 'directory/entries/' + quote_plus(index) + '?page=' + str(page - 1) + '</URL>\n'
+                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + f'?page={page - 1}' + '</URL>\n'
                 '    <Position>' + ('4' if g.is_79xx else '4') + '</Position>\n'
                 '  </SoftKeyItem>\n')
 
@@ -141,7 +134,7 @@ def directory_entries(index):
 
 
 @blueprint.route('/directory/help')
-def directory_help():
+def help_message():
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<CiscoIPPhoneText>\n'
            '  <Title>How To Use</Title>\n'
@@ -161,7 +154,7 @@ def directory_help():
 
 
 @blueprint.route('/directory/79xx')
-def directory_menuitem():
+def menu_item():
     # 79xx series need a menu item before the index
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<CiscoIPPhoneMenu>\n'
@@ -176,9 +169,26 @@ def directory_menuitem():
 
 @blueprint.before_request
 def before_request():
+    g.session = requests.Session()
+
+    response = g.session.get(config.manager_url, timeout = 5, params = {
+        'Action': 'Login',
+        'Username': config.manager_username,
+        'Secret': config.manager_secret
+    })
+    response.raise_for_status()
+
     g.is_79xx = re.search(r'(?x) ^ CP-79', request.headers.get('X-CiscoIPPhoneModelName', ''))
+
+
+@blueprint.teardown_request
+def teardown_request(exception = None):
+    if not exception and "mansession_id" in g.session.cookies:
+        g.session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
 
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
+    traceback.print_exc(file = sys.stderr)
+
     return Response(str(error), mimetype = 'text/plain'), 500

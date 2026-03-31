@@ -8,9 +8,11 @@ written in Python/Flask.
 Endpoints provided are:
 
 * `/authentication` - Authentication for CGI/Execute requests to the phone.
-* `/services` - Simple menu that can show the currently parked calls.
+* `/services` - Simple menu that can show the currently parked calls, night
+  mode and weather report.
+* `/services/88xx` - 8800 series need a MenuItem before loading `/services`.
 * `/directory` - Local directory that uses voicemail.conf.
-* `/directory/79xx` - 7900 series need MenuItem before loading /directory.
+* `/directory/79xx` - 7900 series need MenuItem before loading `/directory`.
 * `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
 * `/quality-report` - Record information when QRT in selected.

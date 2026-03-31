@@ -4,7 +4,9 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
+import sys
 import re
+import traceback
 from html import escape
 
 from lxml import etree
@@ -22,10 +24,6 @@ def help_information():
         return Response('Invalid id', mimetype = 'text/plain'), 500
 
     document = etree.parse('./phone_help.xml')
-
-    if not document:
-        return Response('XML error', mimetype = 'text/plain'), 500
-
     element = document.find(f'HelpItem[ID="{id}"]')
 
     if element:
@@ -52,4 +50,6 @@ def help_information():
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
+    traceback.print_exc(file = sys.stderr)
+
     return Response(str(error), mimetype = 'text/plain'), 500

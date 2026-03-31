@@ -8,14 +8,20 @@ import os.path
 import yaml
 
 
-reports_dir = '/var/log/cisco'
+manager_url = 'http://localhost:8088/mxml'
+manager_username = 'asterisk'
+manager_secret = 'asterisk'
 
 cgi_username = 'cisco'
 cgi_password = 'cisco'
 
-manager_url = 'http://localhost:8088/mxml'
-manager_username = 'asterisk'
-manager_secret = 'asterisk'
+night_mode = ''
+
+weather_report_latitude = ''
+weather_report_longitude = ''
+weather_report_units = 'metric'
+
+reports_dir = '/var/log/cisco'
 
 config_file = os.environ.get('SERVICES_CONFIG', 'config.yml')
 
@@ -24,11 +30,17 @@ if os.path.exists(config_file):
         document = yaml.safe_load(file)
 
         if document:
-            reports_dir = document.get('reports-dir', reports_dir)
+            manager_url = document.get('manager-url', manager_url)
+            manager_username = document.get('manager-username', manager_username)
+            manager_secret = document.get('manager-secret', manager_secret)
 
             cgi_username = document.get('cgi-username', cgi_username)
             cgi_password = document.get('cgi-password', cgi_password)
 
-            manager_url = document.get('manager-url', manager_url)
-            manager_username = document.get('manager-username', manager_username)
-            manager_secret = document.get('manager-secret', manager_secret)
+            night_mode = document.get('night-mode', night_mode)
+
+            weather_report_latitude = document.get('weather-report-latitude', weather_report_latitude)
+            weather_report_longitude = document.get('weather-report-longitude', weather_report_longitude)
+            weather_report_units = document.get('weather-report-units', weather_report_units)
+
+            reports_dir = document.get('reports-dir', reports_dir)

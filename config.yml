@@ -1,20 +1,28 @@
-# This file contains the config needed for the phone XML services
-# you can override the defalt location by setting the environment
-# variable SERVIES_CONFIG.
+# This file contains the config needed for the phone XML services you can
+# override the defalt location by setting the environment variable
+# SERVIES_CONFIG.
+
+# URL and credentials for the Asterisk web-server and manager interface.
+#
+# manager-url: "http://localhost:8088/mxml"
+# manager-username: "asterisk"
+# manager-secret: "asterisk"
+
+# Basic authentication for when a request is sent to the phones CGI/Execute url.
+#
+# cgi-username: "cisco"
+# cgi-password: "cisco"
+
+# Database variable that is set when toggling night mode in the services menu.
+#
+# night-mode: "Dialplan/NightMode"
+
+# Weather report in the services menu. Units can be either metric or imperial.
+#
+# weather-report-latitude: ""
+# weather-report-longituide: ""
+# weather-report-units: "metric"
 
 # Where to write logs from the problem report tool.
 #
-# reports-dir: /var/log/cisco
-
-# Basic authentication for when a request is sent to the phones
-# CGI/Execute url.
-#
-# cgi-username: cisco
-# cgi-password: cisco
-
-# URL and credentials for the Asterisk web-server and manager
-# interface.
-#
-# manager-url: http://localhost:8088/mxml
-# manager-username: asterisk
-# manager-secret: asterisk
+# reports-dir: "/var/log/cisco"

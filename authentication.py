@@ -4,7 +4,11 @@
 # This program is free software, distributed under the terms of
 # the GNU General Public License Version 2.
 
+import sys
+import traceback
+
 from flask import Blueprint, Response, request
+
 import config
 
 
@@ -24,4 +28,6 @@ def cgi_authentication():
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
+    traceback.print_exc(file = sys.stderr)
+
     return Response('ERROR', mimetype = 'text/plain'), 500
