@@ -11,6 +11,7 @@ Endpoints provided are:
 * `/services` - Simple menu that can show the currently parked calls, night
   mode and weather report.
 * `/directory` - Local directory that uses voicemail.conf.
+* `/messages` - Manage voicemail messages visually (Asterisk 22.11.0 or later).
 * `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
 * `/quality-report` - Record information when QRT in selected.
@@ -22,8 +23,10 @@ variable.
 Additional settings for Flask can be specified in the `FLASK_CONFIG`
 environment variable.
 
-See [Phone Services](https://usecallmanager.nz/phone-services.html) for
-more information.
+The `messages` endpoint requires additional extensions in the dial
+plan for playing messages and greetings.
+See [Dialplan Extensions](https://usecallmanager.nz/dialplan-extensions.html#messages)
+for more information.
 
 ## Requirements
 
