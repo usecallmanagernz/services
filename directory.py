@@ -8,12 +8,11 @@ import sys
 import re
 import traceback
 from math import ceil
-from urllib.parse import quote_plus
-from html import escape
 
 import requests
 from lxml import etree
-from flask import Blueprint, Response, request, g
+from lxml.builder import E as tag
+from flask import Blueprint, Response, request, g as context
 
 import config
 
@@ -22,49 +21,80 @@ blueprint = Blueprint('directory', __name__)
 
 
 @blueprint.route('/directory')
-def get_index():
-    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<CiscoIPPhoneMenu>\n'
-           '  <Title>Local Directory</Title>\n')
+def application_menu():
+    if not context.is_79xx:
+        return list_directories()
+
+    # 79xx series needs a menu item first
+    document = tag('CiscoIPPhoneMenu',
+        tag('MenuItem',
+            tag('Name', 'Local Directory'),
+            tag('URL', request.url_root + 'directory/menu')
+        ))
+
+    xml = etree.tostring(document, xml_declaration = True, encoding = 'UTF-8', pretty_print = True).decode()
+
+    return Response(xml, headers = {
+        'Content-Type': 'text/xml',
+        'Expires': 'Thu, 01 Jan 1970 00:00:00 GMT'
+    }), 200
+
+
+@blueprint.route('/directory/menu')
+def list_directories():
+    document = tag('CiscoIPPhoneMenu', tag('Title', 'Local Directory' if context.is_79xx else 'Contacts'))
 
     for index in ('1', '2ABC', '3DEF', '4GHI', '5JKL', '6MNO', '7PRQS', '8TUV', '9WXYZ', '0'):
-        xml += ('  <MenuItem>\n'
-                '    <Name>' + escape(index) + '</Name>\n'
-                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + '</URL>\n'
-                '  </MenuItem>\n')
+        document.append(tag('MenuItem',
+            tag('Name', index),
+            tag('URL', request.url_root + 'directory/' + index)
+        ))
 
-    if g.is_79xx:
-        xml += '  <Prompt>Your current options</Prompt>\n'
+    if context.is_79xx:
+        document.append(tag('Prompt', 'Your current options'))
 
-    xml += ('  <SoftKeyItem>\n'
-            '    <Name>Exit</Name>\n'
-            '    <Position>' + ('3' if g.is_79xx else '1') + '</Position>\n'
-            '    <URL>Init:Directories</URL>\n'
-            '  </SoftKeyItem>\n'
-            '  <SoftKeyItem>\n'
-            '    <Name>' + ('Select' if g.is_79xx else 'View') + '</Name>\n'
-            '    <Position>' + ('1' if g.is_79xx else '2') + '</Position>\n'
-            '    <URL>SoftKey:Select</URL>\n'
-            '  </SoftKeyItem>\n'
-            '  <SoftKeyItem>\n'
-            '    <Name>Help</Name>\n'
-            '    <Position>' + ('2' if g.is_79xx else '3') + '</Position>\n'
-            '    <URL>' + request.url_root + 'directory/help</URL>\n'
-            '  </SoftKeyItem>\n'
-            '</CiscoIPPhoneMenu>\n')
+    document.extend([
+        tag('SoftKeyItem',
+            tag('Name', 'Exit'),
+            tag('URL', 'Init:Directories'),
+            tag('Position', '3' if context.is_79xx else '1')
+        ),
+        tag('SoftKeyItem',
+            tag('Name', 'Select' if context.is_79xx else 'View'),
+            tag('URL', 'SoftKey:Select'),
+            tag('Position', '1' if context.is_79xx else '2')
+        ),
+        tag('SoftKeyItem',
+            tag('Name', 'Help'),
+            tag('URL', request.url_root + 'directory/help'),
+            tag('Position', '2' if context.is_79xx else '3')
+        )
+    ])
 
-    return Response(xml, mimetype = 'text/xml'), 200
+    xml = etree.tostring(document, xml_declaration = True, encoding = 'UTF-8', pretty_print = True).decode()
+
+    return Response(xml, headers = {
+        'Content-Type': 'text/xml',
+        'Expires': 'Thu, 01 Jan 1970 00:00:00 GMT'
+    }), 200
 
 
-@blueprint.route('/directory/mailboxes/<index>')
+@blueprint.route('/directory/<index>')
 def list_mailboxes(index):
     if not re.search(r'(?x) ^ [A-Z0-9]+ $', index):
         return directory_index()
 
-    response = g.session.get(config.manager_url, timeout = 5, params = {'Action': 'VoicemailUsersList'})
+    response = context.session.get(config.manager_url, timeout = 5, params = {'Action': 'VoicemailUsersList'})
     response.raise_for_status()
 
     document = etree.fromstring(response.content)
+    element = document.find('response/generic[@response="Error"]')
+
+    if element is not None:
+        error = element.get('message')
+
+        raise Exception(error)
+
     mailboxes = []
 
     for element in document.findall('response/generic[@event="VoicemailUserEntry"]'):
@@ -77,118 +107,109 @@ def list_mailboxes(index):
         mailboxes.append((mailbox, name))
 
     mailboxes.sort(key = lambda mailbox: mailbox[1])
-
-    # 10 mailboxes per page
     pages = ceil(len(mailboxes) / 10)
 
     try:
         page = int(request.args.get('page', '1'))
 
-        if page > pages:
+        if page < 1 or page > pages:
             raise ValueError
 
     except ValueError:
         page = 1
 
-    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<CiscoIPPhoneDirectory>\n'
-           '  <Title>' + escape(index) + (f' {page}/{pages}' if pages > 1 else '') + '</Title>\n')
+    document = tag('CiscoIPPhoneDirectory', tag('Title', index + (' ' + str(page) + '/' + str(pages) if pages > 1 else '')))
 
     for mailbox, name in mailboxes[(page - 1) * 10:page * 10]:
-        xml += ('  <DirectoryEntry>\n'
-                '    <Name>' + escape(name) + '</Name>\n'
-                '    <Telephone>' + quote_plus(mailbox) + '</Telephone>\n'
-                '  </DirectoryEntry>\n')
+        document.append(tag('DirectoryEntry',
+            tag('Name', name),
+            tag('Telephone', mailbox)
+        ))
 
-    if g.is_79xx:
-        xml += '  <Prompt>Select entry</Prompt>\n'
+    if context.is_79xx:
+        document.append(tag('Prompt', 'Your current options'))
 
-    xml += ('  <SoftKeyItem>\n'
-            '    <Name>Exit</Name>\n'
-            '    <Position>' + ('3' if g.is_79xx else '1') + '</Position>\n'
-            '    <URL>' + request.url_root + 'directory</URL>\n'
-            '  </SoftKeyItem>\n'
-            '  <SoftKeyItem>\n'
-            '    <Name>' + ('Dial' if g.is_79xx else 'Call') + '</Name>\n'
-            '    <Position>' + ('1' if g.is_79xx else '2') + '</Position>\n'
-            '    <URL>SoftKey:Select</URL>\n'
-            '  </SoftKeyItem>\n')
+    position = iter(map(str, range(1, 5)))
+
+    document.append(tag('SoftKeyItem',
+        tag('Name', 'Back' if context.is_79xx else 'Exit'),
+        tag('URL', request.url_root + 'directory/menu' if context.is_79xx else 'Init:Directories'),
+        tag('Position', '3' if context.is_79xx else next(position))
+    ))
+
+    document.append(tag('SoftKeyItem',
+        tag('Name', 'Dial' if context.is_79xx else 'Call'),
+        tag('URL', 'SoftKey:Select'),
+        tag('Position', '1' if context.is_79xx else next(position))
+    ))
 
     if page < pages:
-        xml += ('  <SoftKeyItem>\n'
-                '    <Name>Next</Name>\n'
-                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + f'?page={page + 1}' + '</URL>\n'
-                '    <Position>' + ('2' if g.is_79xx else '3') + '</Position>\n'
-                '  </SoftKeyItem>\n')
+        document.append(tag('SoftKeyItem',
+            tag('Name', 'Next'),
+            tag('URL', request.url_root + 'directory/' + index + '?page=' + str(page + 1)),
+            tag('Position', '2' if context.is_79xx else next(position))
+        ))
 
     if page > 1:
-        xml += ('  <SoftKeyItem>\n'
-                '    <Name>Previous</Name>\n'
-                '    <URL>' + request.url_root + 'directory/mailboxes/' + quote_plus(index) + f'?page={page - 1}' + '</URL>\n'
-                '    <Position>' + ('4' if g.is_79xx else '4') + '</Position>\n'
-                '  </SoftKeyItem>\n')
+        document.append(tag('SoftKeyItem',
+            tag('Name', 'Previous'),
+            tag('URL', request.url_root + 'directory/' + index + '?page=' + str(page - 1)),
+            tag('Position', '2' if context.is_79xx else next(position))
+        ))
 
-    xml += '</CiscoIPPhoneDirectory>\n'
+    xml = etree.tostring(document, xml_declaration = True, encoding = 'UTF-8', pretty_print = True).decode()
 
-    return Response(xml, mimetype = 'text/xml'), 200
+    return Response(xml, headers = {
+        'Content-Type': 'text/xml',
+        'Expires': 'Thu, 01 Jan 1970 00:00:00 GMT'
+    }), 200
 
 
 @blueprint.route('/directory/help')
 def help_message():
-    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<CiscoIPPhoneText>\n'
-           '  <Title>How To Use</Title>\n'
-           '  <Text>Use the keypad or navigation key to select the first letter of the person\'s name.</Text>\n')
+    document = tag('CiscoIPPhoneText',
+        tag('Title', 'How To Use'),
+        tag('Text', 'Use the keypad or navigation key to select the first letter of the person\'s name.'))
 
-    if g.is_79xx:
-        xml += '  <Prompt>Your current options</Prompt>\n'
+    if context.is_79xx:
+        document.append(tag('Prompt', 'Your current options'))
 
-    xml += ('  <SoftKeyItem>\n'
-            '    <Name>Back</Name>\n'
-            '    <URL>SoftKey:Exit</URL>\n'
-            '    <Position>' + ('3' if g.is_79xx else '1') + '</Position>\n'
-            '  </SoftKeyItem>\n'
-            '</CiscoIPPhoneText>\n')
+    document.append(tag('SoftKeyItem',
+        tag('Name', 'Back' if context.is_79xx else 'Exit'),
+        tag('URL', request.url_root + 'directory/menu'),
+        tag('Position', '3' if context.is_79xx else '1')
+    ))
 
-    return Response(xml, mimetype = 'text/xml'), 200
+    xml = etree.tostring(document, xml_declaration = True, encoding = 'UTF-8', pretty_print = True).decode()
 
-
-@blueprint.route('/directory/79xx')
-def menu_item():
-    # 79xx series need a menu item before the index
-    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<CiscoIPPhoneMenu>\n'
-           '  <MenuItem>\n'
-           '    <Name>Local Directory</Name>\n'
-           '    <URL>' + request.url_root + 'directory</URL>\n'
-           '  </MenuItem>\n'
-           '</CiscoIPPhoneMenu>\n')
-
-    return Response(xml, mimetype = 'text/xml'), 200
+    return Response(xml, headers = {
+        'Content-Type': 'text/xml',
+        'Expires': 'Thu, 01 Jan 1970 00:00:00 GMT'
+    }), 200
 
 
 @blueprint.before_request
 def before_request():
-    g.session = requests.Session()
+    context.session = requests.Session()
 
-    response = g.session.get(config.manager_url, timeout = 5, params = {
+    response = context.session.get(config.manager_url, timeout = 5, params = {
         'Action': 'Login',
         'Username': config.manager_username,
         'Secret': config.manager_secret
     })
     response.raise_for_status()
 
-    g.is_79xx = re.search(r'(?x) ^ CP-79', request.headers.get('X-CiscoIPPhoneModelName', ''))
+    context.is_79xx = re.search(r'(?x) ^ CP-79', request.headers.get('X-CiscoIPPhoneModelName', ''))
 
 
 @blueprint.teardown_request
 def teardown_request(exception = None):
-    if not exception and "mansession_id" in g.session.cookies:
-        g.session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
+    if not exception and "mansession_id" in context.session.cookies:
+        context.session.get(config.manager_url, timeout = 5, params = {'Action': 'Logoff'})
 
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
     traceback.print_exc(file = sys.stderr)
 
-    return Response(str(error), mimetype = 'text/plain'), 500
+    return Response(str(error), headers = {'Content-Type': 'text/plain'}), 500

@@ -10,6 +10,7 @@ import authentication
 import information
 import services
 import directory
+import messages
 import quality_report
 import problem_report
 
@@ -22,6 +23,7 @@ application.register_blueprint(information.blueprint)
 
 application.register_blueprint(services.blueprint)
 application.register_blueprint(directory.blueprint)
+application.register_blueprint(messages.blueprint)
 
 application.register_blueprint(quality_report.blueprint)
 application.register_blueprint(problem_report.blueprint)

@@ -21,13 +21,13 @@ def cgi_authentication():
     password = request.args.get('Password', '')
 
     if username != config.cgi_username or password != config.cgi_password:
-        return Response('UNAUTHORIZED', mimetype = 'text/plain'), 200
+        return Response('UNAUTHORIZED', headers = {'Content-Type': 'text/plain'}), 200
 
-    return Response('AUTHORIZED', mimetype = 'text/plain'), 200
+    return Response('AUTHORIZED', headers = {'Content-Type': 'text/plain'}), 200
 
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
     traceback.print_exc(file = sys.stderr)
 
-    return Response('ERROR', mimetype = 'text/plain'), 500
+    return Response('ERROR', headers = {'Content-Type': 'text/plain'}), 500

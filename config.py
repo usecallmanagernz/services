@@ -15,6 +15,7 @@ manager_secret = 'asterisk'
 cgi_username = 'cisco'
 cgi_password = 'cisco'
 
+busy_extensions = ''
 night_mode = ''
 
 weather_report_latitude = ''
@@ -37,6 +38,7 @@ if os.path.exists(config_file):
             cgi_username = document.get('cgi-username', cgi_username)
             cgi_password = document.get('cgi-password', cgi_password)
 
+            busy_extensions = document.get('busy-extensions', busy_extensions)
             night_mode = document.get('night-mode', night_mode)
 
             weather_report_latitude = document.get('weather-report-latitude', weather_report_latitude)

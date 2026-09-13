@@ -4,25 +4,30 @@
 
 # URL and credentials for the Asterisk web-server and manager interface.
 #
-# manager-url: "http://localhost:8088/mxml"
-# manager-username: "asterisk"
-# manager-secret: "asterisk"
+#manager-url: "http://localhost:8088/mxml"
+#manager-username: "asterisk"
+#manager-secret: "asterisk"
 
 # Basic authentication for when a request is sent to the phones CGI/Execute url.
 #
-# cgi-username: "cisco"
-# cgi-password: "cisco"
+#cgi-username: "cisco"
+#cgi-password: "cisco"
+
+# Space separated list of SIP peer extensions to display the state of in the
+# services menu. Asterisk 22.5+ required.
+#
+#busy-extensions: ""
 
 # Database variable that is set when toggling night mode in the services menu.
 #
-# night-mode: "Dialplan/NightMode"
+#night-mode: "Dialplan/NightMode"
 
 # Weather report in the services menu. Units can be either metric or imperial.
 #
-# weather-report-latitude: ""
-# weather-report-longituide: ""
-# weather-report-units: "metric"
+#weather-report-latitude: ""
+#weather-report-longituide: ""
+#weather-report-units: "metric"
 
 # Where to write logs from the problem report tool.
 #
-# reports-dir: "/var/log/cisco"
+#reports-dir: "/var/log/cisco"

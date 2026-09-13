@@ -10,9 +10,7 @@ Endpoints provided are:
 * `/authentication` - Authentication for CGI/Execute requests to the phone.
 * `/services` - Simple menu that can show the currently parked calls, night
   mode and weather report.
-* `/services/88xx` - 8800 series need a MenuItem before loading `/services`.
 * `/directory` - Local directory that uses voicemail.conf.
-* `/directory/79xx` - 7900 series need MenuItem before loading `/directory`.
 * `/information` - 7900 series Info button phone help.
 * `/problem-report` - 7800 and 8800 series problem report upload.
 * `/quality-report` - Record information when QRT in selected.
@@ -29,7 +27,8 @@ more information.
 
 ## Requirements
 
-The following non-standard Python modules are required: `requests` and `Flask`.
+The following non-standard Python modules are required: 'pyyaml', `lxml`
+`requests` and `Flask`.
 
 You can use the packages provided by your OS distribution or run
 `sudo pip3 install -r requirements.txt` to satisfy those dependancies.
@@ -64,8 +63,18 @@ sudo systemctl restart apache2
 See [HTTP Provisioning](https://usecallmanager.nz/http-provisioning.html#XML-Services)
 for more information.
 
-The Asterisk Manager web interface also needs to be enabled in
-`/etc/asterisk/manager.conf` and a user added with the credentials from `config.yml`.
+Enable the Asterisk HTTP server in `/etc/asterisk/http.conf`.
+
+```
+[general]
+enabled=yes
+bindaddr=127.0.0.0
+bindport=8088
+...
+```
+
+Enable the Asterisk Manager web interface in  `/etc/asterisk/manager.conf`
+and add a user with the credentials from `config.yml`.
 
 ```
 [general]

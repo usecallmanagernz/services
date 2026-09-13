@@ -10,6 +10,7 @@ import traceback
 from html import escape
 
 from lxml import etree
+from lxml.builder import E as tag
 from flask import Blueprint, Response, request
 
 
@@ -21,35 +22,38 @@ def help_information():
     id = request.args.get('id', '')
 
     if not re.search(r'(?x) ^ [0-9]+ $', id):
-        return Response('Invalid id', mimetype = 'text/plain'), 500
+        return Response('Invalid id', headers = {'Content-Type': 'text/plain'}), 500
 
     document = etree.parse('./phone_help.xml')
-    element = document.find(f'HelpItem[ID="{id}"]')
+    element = document.find('HelpItem[ID="' + escape(id) + '"]')
 
-    if element:
+    if element is not None:
         title = element.find('Title').text
         text = element.find('Text').text
     else:
         title = 'Information'
         text = 'Sorry, no help on that topic.'
 
-    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<CiscoIPPhoneText>\n'
-           '  <Title>' + escape(title) + '</Title>\n'
-           '  <Text>' + escape(text) + '</Text>\n'
-           '  <Prompt>Your current options</Prompt>\n'
-           '  <SoftKeyItem>\n'
-           '    <Name>Exit</Name>\n'
-           '    <Position>3</Position>\n'
-           '    <URL>Key:Info</URL>\n'
-           '  </SoftKeyItem>\n'
-           '</CiscoIPPhoneText>\n')
+    document = tag('CiscoIPPhoneText',
+        tag('Title', title),
+        tag('Text', text),
+        tag('Prompt', 'Your current options'),
+        tag('SoftKey',
+            tag('Name', 'Exit'),
+            tag('URL', 'Key:Info'),
+            tag('Position', '3')
+        ))
 
-    return Response(xml, mimetype = 'text/xml'), 200
+    xml = etree.tostring(document, xml_declaration = True, encoding = 'UTF-8', pretty_print = True).decode()
+
+    return Response(xml, headers = {
+        'Content-Type': 'text/xml',
+        'Expires': 'Thu, 01 Jan 1970 00:00:00 GMT'
+    }), 200
 
 
 @blueprint.errorhandler(Exception)
 def error_handler(error):
     traceback.print_exc(file = sys.stderr)
 
-    return Response(str(error), mimetype = 'text/plain'), 500
+    return Response(str(error), headers = {'Content-Type': 'text/plain'}), 500
