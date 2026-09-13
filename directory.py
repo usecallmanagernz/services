@@ -82,7 +82,7 @@ def list_directories():
 @blueprint.route('/directory/<index>')
 def list_mailboxes(index):
     if not re.search(r'(?x) ^ [A-Z0-9]+ $', index):
-        return directory_index()
+        return list_directories()
 
     response = context.session.get(config.manager_url, timeout = 5, params = {'Action': 'VoicemailUsersList'})
     response.raise_for_status()

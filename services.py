@@ -159,7 +159,7 @@ def busy_extensions():
     if not len(config.busy_extensions):
         return Response('No busy extensions', headers = {'Content-Type': 'text/plain'}), 404
 
-    busy_extensions = set(re.split('(?x) [ ,]+', config.busy_extensions))
+    extensions = set(re.split('(?x) [ ,]+', config.busy_extensions))
 
     response = context.session.get(config.manager_url, timeout = 5, params = {'Action': 'SIPPeers'})
     response.raise_for_status()
@@ -177,7 +177,7 @@ def busy_extensions():
     for element in document.findall('response/generic[@event="SIPPeer"]'):
         extension = element.get('name')
 
-        if extension not in busy_extensions:
+        if extension not in extensions:
             continue
 
         max_calls = int(element.get('maxcalls'))
@@ -368,18 +368,18 @@ def weather_report():
 
     forecast = response.json()
 
-    weather_report = 'Temperature is {0}{1}'.format(
+    report = 'Temperature is {0}{1}'.format(
         forecast['current']['temperature_2m'],
         forecast['current_units']['temperature_2m'][1:]
     )
 
     if forecast['current']['apparent_temperature'] != forecast['current']['temperature_2m']:
-        weather_report += ' (feels like {0}{1})'.format(
+        report += ' (feels like {0}{1})'.format(
             forecast['current']['apparent_temperature'],
             forecast['current_units']['apparent_temperature'][1:]
         )
 
-    weather_report += ' with a low of {0}{1} and a high of {2}{3}.\n\nRainfall is {4}{5}'.format(
+    report += ' with a low of {0}{1} and a high of {2}{3}.\n\nRainfall is {4}{5}'.format(
         forecast['daily']['temperature_2m_min'][0],
         forecast['daily_units']['temperature_2m_min'][1:],
         forecast['daily']['temperature_2m_max'][0],
@@ -389,12 +389,12 @@ def weather_report():
     )
 
     if forecast['current']['precipitation_probability']:
-       weather_report = ' with a {0}{1} chance of rain'.format(
+        report = ' with a {0}{1} chance of rain'.format(
            forecast['current']['precipitation_probability'],
            forecast['current_units']['precipitation_probability']
        )
 
-    weather_report += ' and a pressure of {0}{1}.\n\nWind is {2}{3} from the {4} with gusts of up to {5}{6}.'.format(
+    report += ' and a pressure of {0}{1}.\n\nWind is {2}{3} from the {4} with gusts of up to {5}{6}.'.format(
         forecast['current']['surface_pressure'],
         forecast['current_units']['surface_pressure'],
         forecast['current']['wind_speed_10m'],
@@ -407,7 +407,7 @@ def weather_report():
 
     document = tag('CiscoIPPhoneText',
         tag('Title', 'Weather Report'),
-        tag('Text', weather_report))
+        tag('Text', report))
 
     if context.is_79xx:
         document.append(tag('Prompt', 'Your current options'))

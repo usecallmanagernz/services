@@ -333,7 +333,8 @@ def read_message(mailbox, folder, message):
 
     next_message = None
     previous_message = None
-    exists = False
+    name = None
+    extension = None
 
     for element in document.findall('response/generic[@event="VoicemailBoxDetail"]'):
         target_message = element.get('id')
@@ -342,7 +343,6 @@ def read_message(mailbox, folder, message):
             previous_message = max(target_message, previous_message or target_message)
 
         elif target_message == message:
-            exists = True
             matches = re.search(r'(?x) ^ "(?P<name> [^"]*)" [ ]+ <(?P<extension> [^>]+)> $', element.get('callerid', ''))
 
             if matches:
@@ -359,7 +359,7 @@ def read_message(mailbox, folder, message):
         elif target_message > message:
             next_message = min(target_message, next_message or target_message)
 
-    if not exists:
+    if not extension:
         return list_messages(mailbox, folder)
 
     document = tag('CicoIPPhoneText',
@@ -458,7 +458,7 @@ def delete_message(mailbox, folder, message):
 
     next_message = None
     previous_message = None
-    exists = False
+    extension = None
 
     for element in document.findall('response/generic[@event="VoicemailBoxDetail"]'):
         target_message = element.get('id')
@@ -467,7 +467,6 @@ def delete_message(mailbox, folder, message):
             previous_message = max(target_message, previous_message or target_message)
 
         elif target_message == message:
-            exists = True
             matches = re.search(r'(?x) ^ "([^"]*)?" [ ]+ <(?P<extension> [^>]+)> $', element.get('callerid', ''))
 
             if matches:
@@ -478,7 +477,7 @@ def delete_message(mailbox, folder, message):
         elif target_message > message:
             next_message = min(target_message, next_message or target_message)
 
-    if not exists and folder != 'INBOX':
+    if not extension and folder != 'INBOX':
         return list_messages(mailbox, folder)
 
     # The message may have been automatically moved to Old when played so try deleting it from there
@@ -486,7 +485,7 @@ def delete_message(mailbox, folder, message):
         'Action': 'VoicemailRemove',
         'Context': 'default',
         'Mailbox': mailbox,
-        'Folder': 'Old' if not exists and folder == 'INBOX' else folder,
+        'Folder': 'Old' if not extension and folder == 'INBOX' else folder,
         'ID': message
     })
     response.raise_for_status()
@@ -570,7 +569,7 @@ def move_message(mailbox, folder, message, target_folder = None):
 
         next_message = None
         previous_message = None
-        exists = False
+        extension = None
 
         for element in document.findall('response/generic[@event="VoicemailBoxDetail"]'):
             target_message = element.get('id')
@@ -579,7 +578,6 @@ def move_message(mailbox, folder, message, target_folder = None):
                 previous_message = max(target_message, previous_message or target_message)
 
             elif target_message == message:
-                exists = True
                 matches = re.search(r'(?x) ^ "([^"]*)?" [ ]+ <(?P<extension> [^>]+)> $', element.get('callerid', ''))
 
                 if matches:
@@ -590,14 +588,14 @@ def move_message(mailbox, folder, message, target_folder = None):
             elif target_message > message:
                 next_message = min(target_message, next_message or target_message)
 
-        if not exists and folder != 'INBOX':
+        if not extension and folder != 'INBOX':
             return list_messages(mailbox, folder)
 
         response = context.session.get(config.manager_url, timeout = 5, params = {
             'Action': 'VoicemailMove',
             'Context': 'default',
             'Mailbox': mailbox,
-            'Folder': 'Old' if not exists and folder == 'INBOX' else folder,
+            'Folder': 'Old' if not extension and folder == 'INBOX' else folder,
             'ID': message,
             'ToFolder': target_folder
         })
@@ -718,7 +716,7 @@ def forward_message(mailbox, folder, message, target_mailbox = None):
 
         next_message = None
         previous_message = None
-        exists = False
+        extension = None
 
         for element in document.findall('response/generic[@event="VoicemailBoxDetail"]'):
             target_message = element.get('id')
@@ -727,7 +725,6 @@ def forward_message(mailbox, folder, message, target_mailbox = None):
                 previous_message = max(target_message, previous_message or target_message)
 
             elif target_message == message:
-                exists = True
                 matches = re.search(r'(?x) ^ "([^"]*)?" [ ]+ <(?P<extension> [^>]+)> $', element.get('callerid', ''))
 
                 if matches:
@@ -738,14 +735,14 @@ def forward_message(mailbox, folder, message, target_mailbox = None):
             elif target_message > message:
                 next_message = min(target_message, next_message or target_message)
 
-        if not exists and folder != 'INBOX':
+        if not extension and folder != 'INBOX':
             return list_messages(mailbox, folder)
 
         response = context.session.get(config.manager_url, timeout = 5, params = {
             'Action': 'VoicemailForward',
             'Context': 'default',
             'Mailbox': mailbox,
-            'Folder': 'Old' if not exists and folder == 'INBOX' else folder,
+            'Folder': 'Old' if not extension and folder == 'INBOX' else folder,
             'ID': message,
             'ToContext': 'default',
             'ToMailbox': target_mailbox,
